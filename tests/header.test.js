@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const sessionFactory = require("../tests/factories/sessionFactory");
 
 let page, browser;
 
@@ -33,32 +34,16 @@ test("Clicking login starts oauth flow", async () => {
   expect(currUrl).toMatch("oauth");
 });
 
-test.only("When authentificated and signed in shows logout button", async () => {
+test("When authentificated and signed in shows logout button", async () => {
   // Simulate cookie-session module
-  const id = "5bbc76be5b2aa949c6065da2";
-
-  const Buffer = require("safe-buffer").Buffer;
-  const sessionObj = {
-    passport: {
-      user: id
-    }
-  };
-
-  const sessionString = Buffer.from(JSON.stringify(sessionObj)).toString(
-    "base64"
-  );
-
-  const Keygrip = require("keygrip");
-  const keys = require("../config/keys");
-
-  const keygrip = new Keygrip([keys.cookieKey]);
-  const sig = keygrip.sign("session=" + sessionString);
+  const { session, sig } = sessionFactory();
   // End
 
-  await page.setCookie({ name: "session", value: sessionString });
+  await page.setCookie({ name: "session", value: session });
   await page.setCookie({ name: "session.sig", value: sig });
   await page.goto("localhost:3000");
 
+  // Waits for element to show up
   await page.waitFor("a[href='/auth/logout']");
 
   const logoutTitle = await page.evaluate(
