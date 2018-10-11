@@ -1,4 +1,6 @@
 const puppeteer = require("puppeteer");
+const sessionFactory = require("../factories/sessionFactory");
+const userFactory = require("../factories/userFactory");
 
 class CustomPage {
   constructor(page) {
@@ -18,6 +20,20 @@ class CustomPage {
         return customPage[property] || browser[property] || page[property];
       }
     });
+  }
+
+  async login() {
+    // Simulate cookie-session module
+    const user = await userFactory();
+    const { session, sig } = sessionFactory(user);
+    // End
+
+    await this.page.setCookie({ name: "session", value: session });
+    await this.page.setCookie({ name: "session.sig", value: sig });
+    await this.page.goto("localhost:3000");
+
+    // Waits for element to show up
+    await this.page.waitFor("a[href='/auth/logout']");
   }
 }
 
