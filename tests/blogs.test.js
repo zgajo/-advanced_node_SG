@@ -11,7 +11,7 @@ afterEach(async () => {
   await page.close();
 });
 
-describe("WHEN LOGGED IN", async () => {
+describe("When logged in", async () => {
   beforeEach(async () => {
     await page.login();
     await page.click("a[href='/blogs/new']");
@@ -66,5 +66,22 @@ describe("WHEN LOGGED IN", async () => {
       expect(titleErr).toEqual("You must provide a value");
       expect(contentErr).toEqual("You must provide a value");
     });
+  });
+});
+
+describe("When user is NOT logged in", async () => {
+  test("User cannot create blog post", async () => {
+    const response = await page.evaluate(() => {
+      return fetch("api/blogs", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ title: "My ttile", content: "My content" })
+      }).then(res => res.json());
+    });
+
+    expect(response).toEqual({ error: "You must log in!" });
   });
 });
