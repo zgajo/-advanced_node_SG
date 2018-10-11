@@ -1,18 +1,17 @@
-const puppeteer = require("puppeteer");
 const sessionFactory = require("../tests/factories/sessionFactory");
+const userFactory = require("../tests/factories/userFactory");
 
-let page, browser;
+const Page = require("./helpers/page");
+
+let page;
 
 beforeEach(async () => {
-  browser = await puppeteer.launch({
-    headless: false
-  });
-  page = await browser.newPage();
+  page = await Page.build();
   await page.goto("localhost:3000");
 });
 
 afterEach(async () => {
-  await browser.close();
+  await page.close();
 });
 
 /**
@@ -36,7 +35,8 @@ test("Clicking login starts oauth flow", async () => {
 
 test("When authentificated and signed in shows logout button", async () => {
   // Simulate cookie-session module
-  const { session, sig } = sessionFactory();
+  const user = await userFactory();
+  const { session, sig } = sessionFactory(user);
   // End
 
   await page.setCookie({ name: "session", value: session });
