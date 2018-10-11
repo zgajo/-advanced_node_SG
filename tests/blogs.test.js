@@ -11,18 +11,18 @@ afterEach(async () => {
   await page.close();
 });
 
-test("When logged in, can se blog create form", async () => {
-  // login and check if we're on the blogs list
-  await page.login();
+describe("WHEN LOGGED IN", async () => {
+  beforeEach(async () => {
+    await page.login();
+    await page.click("a[href='/blogs/new']");
+  });
 
-  const currUrl = await page.url();
-  expect(currUrl).toMatch("blogs");
+  test("Can se blog create form", async () => {
+    // click and redirect to blogs form
+    const blogsNew = await page.url();
+    expect(blogsNew).toMatch("blogs/new");
 
-  // click and redirect to blogs form
-  await page.click("a[href='/blogs/new']");
-  const blogsNew = await page.url();
-  expect(blogsNew).toMatch("blogs/new");
-
-  const label = await page.getElement("form label");
-  expect(label).toEqual("Blog Title");
+    const label = await page.getElement("form label");
+    expect(label).toEqual("Blog Title");
+  });
 });
