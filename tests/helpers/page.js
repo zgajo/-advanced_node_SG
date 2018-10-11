@@ -39,6 +39,43 @@ class CustomPage {
     // Waits for element to show up
     await this.page.waitFor("a[href='/auth/logout']");
   }
+
+  async get(path) {
+    return await this.page.evaluate(_path => {
+      return fetch(_path, {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).then(res => res.json());
+    }, path);
+  }
+
+  async post(path, objToSend) {
+    return await this.page.evaluate(
+      (_path, _objToSend) => {
+        return fetch(_path, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(_objToSend)
+        }).then(res => res.json());
+      },
+      path,
+      objToSend
+    );
+  }
+
+  execRequests(actions) {
+    return Promise.all(
+      actions.map(({ method, path, data }) => {
+        return this[method](path, data);
+      })
+    );
+  }
 }
 
 module.exports = CustomPage;
