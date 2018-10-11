@@ -16,9 +16,7 @@ afterEach(async () => {
  */
 
 test("We launch a browser and reading header title", async () => {
-  const headerTitle = await page.evaluate(
-    () => document.querySelector(".brand-logo").innerText
-  );
+  const headerTitle = await page.getElement("a.brand-logo");
 
   expect(headerTitle).toBe("Blogster");
 });
@@ -33,9 +31,7 @@ test("Clicking login starts oauth flow", async () => {
 test("When authentificated and signed in shows logout button", async () => {
   await page.login();
 
-  const logoutTitle = await page.evaluate(
-    () => document.querySelector("a[href='/auth/logout']").innerText
-  );
+  const logoutTitle = await page.getElement("a[href='/auth/logout']");
 
   expect(logoutTitle).toBe("Logout");
 });

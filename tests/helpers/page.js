@@ -22,6 +22,10 @@ class CustomPage {
     });
   }
 
+  async getElement(el) {
+    return this.page.$eval(el, el => el.innerHTML);
+  }
+
   async login() {
     // Simulate cookie-session module
     const user = await userFactory();
