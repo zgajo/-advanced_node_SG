@@ -14,17 +14,21 @@ export const handleToken = token => async dispatch => {
 };
 
 export const submitBlog = (values, file, history) => async dispatch => {
-  const amazonUrl = await axios.get("/api/upload");
+  let amazonUrl = "";
 
-  await axios.put(amazonUrl.data.url, file, {
-    headers: {
-      "Content-Type": file.type
-    }
-  });
+  if (file) {
+    amazonUrl = await axios.get("/api/upload");
+
+    await axios.put(amazonUrl.data.url, file, {
+      headers: {
+        "Content-Type": file.type
+      }
+    });
+  }
 
   const res = await axios.post("/api/blogs", {
     ...values,
-    imageUrl: amazonUrl.data.key
+    imageUrl: amazonUrl ? amazonUrl.data.key : amazonUrl
   });
 
   history.push("/blogs");
