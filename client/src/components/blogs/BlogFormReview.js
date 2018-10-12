@@ -45,7 +45,7 @@ class BlogFormReview extends Component {
 
   onFileChange(event) {
     this.setState({
-      file: event.target.files
+      file: event.target.files[0]
     });
   }
 
